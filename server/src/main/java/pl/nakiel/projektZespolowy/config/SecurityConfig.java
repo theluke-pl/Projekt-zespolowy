@@ -37,7 +37,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .antMatchers("/login*","/signin/**","/signup/**").permitAll()
                 .anyRequest().permitAll()
                 .and()
-                .formLogin().loginPage("/login").permitAll()
+                .formLogin()
+                    .loginPage("/login")
+                    .permitAll()
                 .and()
                 .logout();
     } // @formatter:on
