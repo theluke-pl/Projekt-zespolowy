@@ -11,8 +11,8 @@ import org.springframework.social.connect.ConnectionFactoryLocator;
 import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.connect.mem.InMemoryUsersConnectionRepository;
 import org.springframework.social.connect.web.ProviderSignInController;
-import pl.nakiel.projektZespolowy.security.FacebookConnectionSignup;
-import pl.nakiel.projektZespolowy.security.FacebookSignInAdapter;
+import pl.nakiel.projektZespolowy.security.facebook.FacebookConnectionSignup;
+import pl.nakiel.projektZespolowy.security.facebook.FacebookSignInAdapter;
 
 @Configuration
 @EnableWebSecurity

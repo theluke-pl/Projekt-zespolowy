@@ -1,4 +1,4 @@
-package pl.nakiel.projektZespolowy.security;
+package pl.nakiel.projektZespolowy.security.facebook;
 
 import java.util.Arrays;
 

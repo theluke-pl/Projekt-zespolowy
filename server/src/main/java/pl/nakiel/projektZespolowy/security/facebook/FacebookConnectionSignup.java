@@ -1,15 +1,13 @@
-package pl.nakiel.projektZespolowy.security;
+package pl.nakiel.projektZespolowy.security.facebook;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionSignUp;
-import org.springframework.stereotype.Service;
-import pl.nakiel.projektZespolowy.domain.User;
+import pl.nakiel.projektZespolowy.domain.security.User;
 import pl.nakiel.projektZespolowy.repository.UserRepository;
 
 @Service
