@@ -58,7 +58,7 @@ public class User implements Serializable {
     @JoinColumn(name="LOCALIZATION_ID")
     private Localization localization;
 
-    @ManyToMany(cascade = { CascadeType.ALL }, fetch = fetchType.LAZY)
+    @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
     @JoinTable(
             name = "USERS_ROLES",
             joinColumns = { @JoinColumn(name = "USER_ID") },
