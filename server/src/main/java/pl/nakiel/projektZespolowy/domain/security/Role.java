@@ -18,6 +18,6 @@ public class Role {
     @Column(name="NAME")
     private String name;
 
-    @ManyToMany(mappedBy = "roles")
-    private Set<User> users = new HashSet<>();
+//    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+//    private Set<User> users = new HashSet<>();
 }

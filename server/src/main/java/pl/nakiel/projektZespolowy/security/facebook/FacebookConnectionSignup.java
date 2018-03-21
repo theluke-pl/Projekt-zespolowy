@@ -24,16 +24,19 @@ public class FacebookConnectionSignup implements ConnectionSignUp {
 
     @Override
     public String execute(Connection<?> connection) {
-        if(userRepository.findByFacebookId(connection.getKey().getProviderUserId()) != null)
-            return "fb";
+        if(userRepository.findByFacebookId(connection.getKey().getProviderUserId()) != null){
+            User user = userRepository.findByFacebookId(connection.getKey().getProviderUserId());
+            return user.getId().toString();
+        }
+        String [] fields = { "id", "email",  "first_name", "last_name" };
         System.out.println("signup === ");
         final User user = new User();
-        user.setUsername(connection.getDisplayName());
+        user.setUsername(connection.getKey().getProviderUserId());
         user.setPassword(randomAlphabetic(18));
         user.setFacebookId(connection.getKey().getProviderUserId());
         user.setStatus(User.TO_ACTIVATION_FB);
         userRepository.save(user);
-        return user.getUsername();
+        return user.getId().toString();
     }
 
 }

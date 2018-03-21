@@ -11,10 +11,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.social.connect.ConnectionFactoryLocator;
 import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.connect.mem.InMemoryUsersConnectionRepository;
 import org.springframework.social.connect.web.ProviderSignInController;
+import pl.nakiel.projektZespolowy.security.MySavedRequestAwareAuthenticationSuccessHandler;
 import pl.nakiel.projektZespolowy.security.facebook.FacebookConnectionSignup;
 import pl.nakiel.projektZespolowy.security.facebook.FacebookSignInAdapter;
 
@@ -34,20 +36,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
     @Autowired
     private UserDetailsService userDetailsService;
+    @Autowired
+    private MySavedRequestAwareAuthenticationSuccessHandler authenticationSuccessHandler;
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         // @formatter:off
         http
                 .csrf().disable()
-                .httpBasic()
-                .and()
                 .authorizeRequests()
                 .antMatchers("/login*","/signin/**","/signup/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
                     .loginPage("/login")
+                    .successHandler(authenticationSuccessHandler)
+                    .failureHandler(new SimpleUrlAuthenticationFailureHandler())
                     .permitAll()
                 .and()
                 .logout();

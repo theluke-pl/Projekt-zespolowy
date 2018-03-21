@@ -1,4 +1,4 @@
-package pl.nakiel.projektZespolowy.resources.dto;
+package pl.nakiel.projektZespolowy.resources.dto.changepassword;
 
 import lombok.Data;
 
