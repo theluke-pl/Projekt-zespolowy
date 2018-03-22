@@ -10,7 +10,6 @@ import pl.nakiel.projektZespolowy.resources.dto.createstandarduser.CreateStandar
 import pl.nakiel.projektZespolowy.resources.dto.initfacebookuser.InitFacebookUserRequestDTO;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class UserService implements IUserService{
