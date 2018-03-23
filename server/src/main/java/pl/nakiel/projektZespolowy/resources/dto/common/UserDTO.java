@@ -16,4 +16,5 @@ public class UserDTO {
     private String facebookId;
     private LocalizationDTO localizationDTO;
     private List<String> roles;
+    private String password;
 }

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,6 +19,7 @@ import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.connect.mem.InMemoryUsersConnectionRepository;
 import org.springframework.social.connect.web.ProviderSignInController;
 import pl.nakiel.projektZespolowy.security.MySavedRequestAwareAuthenticationSuccessHandler;
+import pl.nakiel.projektZespolowy.security.RestAuthenticationEntryPoint;
 import pl.nakiel.projektZespolowy.security.facebook.FacebookConnectionSignup;
 import pl.nakiel.projektZespolowy.security.facebook.FacebookSignInAdapter;
 
@@ -38,17 +40,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Autowired
+    private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+
     @Autowired
     private MySavedRequestAwareAuthenticationSuccessHandler authenticationSuccessHandler;
+
+    @Autowired
+    private Environment environment;
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         // @formatter:off
         http
                 .csrf().disable()
+                .exceptionHandling()
+                .authenticationEntryPoint(restAuthenticationEntryPoint)
+                .and()
                 .authorizeRequests()
                 .antMatchers("/login*","/signin/**","/signup/**").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .formLogin()
                     .loginPage("/login")
@@ -56,7 +68,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                     .failureHandler(new SimpleUrlAuthenticationFailureHandler())
                     .permitAll()
                 .and()
-                .logout();
+                .logout().logoutSuccessUrl(environment.getProperty("client.base_url") + "/logout");
     } // @formatter:on
 
     @Bean

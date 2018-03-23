@@ -11,12 +11,11 @@ public interface IUserService {
     List<User> getAllUsers();
 
     List<User> getUsersByRole(String role);
-    User getCurrentUser();
 
     void changePassword(String oldPassword, String newPassword);
 
-    void createStandardUser(CreateStandardUserRequestDTO createStandardUserRequestDTO);
+    User createStandardUser(String username, String password, String email, String firstName, String secondName);
 
-    void initFacebookUser(InitFacebookUserRequestDTO initFacebookUserRequestDTO);
+    User initFacebookUser(InitFacebookUserRequestDTO initFacebookUserRequestDTO);
 
 }

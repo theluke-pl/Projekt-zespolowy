@@ -17,6 +17,7 @@ import pl.nakiel.projektZespolowy.resources.dto.getallusers.GetAllUsersResponseD
 import pl.nakiel.projektZespolowy.resources.dto.getcurrentuser.GetCurrentUserResponseDTO;
 import pl.nakiel.projektZespolowy.resources.dto.initfacebookuser.InitFacebookUserRequestDTO;
 import pl.nakiel.projektZespolowy.resources.dto.initfacebookuser.InitFacebookUserResponseDTO;
+import pl.nakiel.projektZespolowy.security.ISecurityService;
 import pl.nakiel.projektZespolowy.service.admin.IUserService;
 import pl.nakiel.projektZespolowy.utils.converter.UserUserDTOConverter;
 
@@ -32,6 +33,9 @@ public class UsersController {
     IUserService userService;
 
     @Autowired
+    ISecurityService securityService;
+
+    @Autowired
     UserUserDTOConverter userUserDTOConverter;
 
     @ResponseBody
@@ -39,6 +43,7 @@ public class UsersController {
             method = RequestMethod.PUT,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PreAuthorize("hasAuthority('STANDARD_USER')")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequestDTO changePasswordRequestDTO){
         userService.changePassword(
                 changePasswordRequestDTO.getOldPassword(),
@@ -48,12 +53,24 @@ public class UsersController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "",
+    @RequestMapping(value = "/signup",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> createStandardUser(@RequestBody CreateStandardUserRequestDTO createStandardUserRequestDTO){
-        return new ResponseEntity<>(new CreateStandardUserResponseDTO(), HttpStatus.OK);
+
+        User user = userService.createStandardUser(
+                createStandardUserRequestDTO.getUser().getUsername(),
+                createStandardUserRequestDTO.getUser().getPassword(),
+                createStandardUserRequestDTO.getUser().getEmail(),
+                createStandardUserRequestDTO.getUser().getFirstName(),
+                createStandardUserRequestDTO.getUser().getSecondName()
+
+        );
+        UserDTO userDTO = userUserDTOConverter.toUserDTO(user);
+        CreateStandardUserResponseDTO createStandardUserResponseDTO = new CreateStandardUserResponseDTO();
+        createStandardUserRequestDTO.setUser(userDTO);
+        return new ResponseEntity<>(createStandardUserRequestDTO, HttpStatus.OK);
     }
 
     @ResponseBody
@@ -61,6 +78,7 @@ public class UsersController {
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PreAuthorize("hasAuthority('STANDARD_USER')")
     public ResponseEntity<?> initFacebookUser(@RequestBody InitFacebookUserRequestDTO initFacebookUserRequestDTO){
         return new ResponseEntity<>(new InitFacebookUserResponseDTO(), HttpStatus.OK);
     }
@@ -69,8 +87,9 @@ public class UsersController {
     @RequestMapping(value = "",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PreAuthorize("hasAuthority('STANDARD_USER')")
     public ResponseEntity<?> getCurrentUser(){
-        User user = userService.getCurrentUser();
+        User user = securityService.getCurrentUser();
         UserDTO userDTO = userUserDTOConverter.toUserDTO(user);
         GetCurrentUserResponseDTO getCurrentUserResponseDTO = new GetCurrentUserResponseDTO();
         getCurrentUserResponseDTO.setUser(userDTO);
@@ -82,6 +101,7 @@ public class UsersController {
             method = RequestMethod.PUT,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PreAuthorize("hasAuthority('STANDARD_USER')")
     public ResponseEntity<?> editCurrentUser(@RequestBody EditCurrentUserRequestDTO editCurrentUserRequestDTO){
 
         return new ResponseEntity<>(new EditCurrentUserResponseDTO(), HttpStatus.OK);
