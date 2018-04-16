@@ -2,6 +2,9 @@ package pl.nakiel.projektZespolowy.domain.security;
 
 
 import lombok.Data;
+import pl.nakiel.projektZespolowy.domain.events.Comment;
+import pl.nakiel.projektZespolowy.domain.events.Event;
+import pl.nakiel.projektZespolowy.domain.events.Image;
 import pl.nakiel.projektZespolowy.domain.geo.Localization;
 
 import javax.persistence.*;
@@ -23,25 +26,25 @@ public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="ID")
+    @Column(name = "ID")
     private Long id;
 
-    @Column(name="USERNAME", nullable = false, unique = true)
+    @Column(name = "USERNAME", nullable = false, unique = true)
     private String username;
 
-    @Column(name="PASSWORD")
+    @Column(name = "PASSWORD")
     private String password;
 
-    @Column(name="EMAIL")
+    @Column(name = "EMAIL")
     private String email;
 
-    @Column(name="FIRST_NAME")
+    @Column(name = "FIRST_NAME")
     private String firstName;
 
-    @Column(name="SECOND_NAME")
+    @Column(name = "SECOND_NAME")
     private String secondName;
 
-    @Column(name="PHONE_NUMBER")
+    @Column(name = "PHONE_NUMBER")
     private String phoneNumber;
 
     /**
@@ -50,21 +53,38 @@ public class User implements Serializable {
      * 3 - aktywne - standardowo
      * 4 - aktywne - facebook
      */
-    @Column(name="STATUS")
+    @Column(name = "STATUS")
     private Integer status;
 
-    @Column(name="FACEBOOK_ID")
+    @Column(name = "FACEBOOK_ID")
     private String facebookId;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name="LOCALIZATION_ID")
+    @JoinColumn(name = "AVATAR_URL_ID")
+    private Image image;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "LOCALIZATION_ID")
     private Localization localization;
 
-    @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "USERS_ROLES",
-            joinColumns = { @JoinColumn(name = "USER_ID") },
-            inverseJoinColumns = { @JoinColumn(name = "ROLE_ID") }
+            joinColumns = {@JoinColumn(name = "USER_ID")},
+            inverseJoinColumns = {@JoinColumn(name = "ROLE_ID")}
     )
     private List<Role> roles = new ArrayList<>();
+
+    //relacja user(autor) - event : usunięcie użytkownika usuwa jego wszystkie eventy
+    @OneToMany(mappedBy = "eventsAuthor",cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+    private List<Event> usersEvents = new ArrayList<>();
+
+    //relacja user(obserwujący) - eventy(obserowane) : usunięcie użytkownika nie wpływa na eventy
+    @ManyToMany(mappedBy = "followingUsers")
+    private List<Event> followedEvents = new ArrayList<>();
+
+
+    //relacja user(autor) - komentarz : usunięcie użytkownika nie wpływa na  komentarze
+    @OneToMany(mappedBy = "commentsAuthor", fetch = FetchType.LAZY)
+    private List<Comment> usersComments = new ArrayList<>();
 }
