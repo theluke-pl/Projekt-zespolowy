@@ -1,17 +1,26 @@
 package pl.nakiel.projektZespolowy.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.env.Environment;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.servlet.config.annotation.*;
 import pl.nakiel.projektZespolowy.ServerApplication;
+
+import java.util.Properties;
 
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = { "pl.nakiel.projektZespolowy.resources" })
 public class WebConfig extends WebMvcConfigurerAdapter {
+
+    @Autowired
+    Environment environment;
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {

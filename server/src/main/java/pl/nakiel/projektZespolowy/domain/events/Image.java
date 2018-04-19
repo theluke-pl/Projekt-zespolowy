@@ -21,7 +21,7 @@ public class Image implements Serializable {
     private String url;
 
     //relacja image - event : usunięcie zdjęcia nie usuwa eventu
-    @ManyToOne( fetch = FetchType.EAGER)
+    @ManyToOne( fetch = FetchType.LAZY)
     @JoinColumn(name="EVENT_ID")
     private Event imagesEvent;
 
