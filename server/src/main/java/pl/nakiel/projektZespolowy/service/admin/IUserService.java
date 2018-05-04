@@ -16,6 +16,8 @@ public interface IUserService {
 
     User createStandardUser(String username, String password, String email, String firstName, String secondName);
 
+    User getUserById(Long id);
+
     User initFacebookUser(InitFacebookUserRequestDTO initFacebookUserRequestDTO);
 
 }

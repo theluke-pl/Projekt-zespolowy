@@ -14,4 +14,12 @@ public class Localization implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name="ID")
     private Long id;
+
+    //lokalizacja
+    @Column(name="LONGITUDE")
+    private Double longitude;
+
+    @Column(name="LATITUDE")
+    private Double latitude;
+
 }

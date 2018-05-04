@@ -2,6 +2,7 @@ package pl.nakiel.projektZespolowy.domain.events;
 
 
 import lombok.Data;
+import pl.nakiel.projektZespolowy.domain.geo.Localization;
 import pl.nakiel.projektZespolowy.domain.security.User;
 
 import javax.persistence.*;
@@ -31,12 +32,9 @@ public class Event implements Serializable {
     @Column(name="DATE")
     private Date date;    //jak przetrzymywać najlepiej datę i godzinę?
 
-    //lokalizacja
-    @Column(name="LONGITUDE")
-    private Double longitude;
-
-    @Column(name="LATITUDE")
-    private Double latitude;
+    @ManyToOne( fetch = FetchType.LAZY)
+    @JoinColumn(name="LOCALIZATION_ID")
+    private Localization localization;
 
     /**
      * 1 - poszukiwanie
@@ -45,6 +43,9 @@ public class Event implements Serializable {
      */
     @Column(name="TYPE")
     private Integer type;
+
+    @Column(name="ACTIVE")
+    private Boolean active;
 
     @Column(name="VIEWS")
     private Long views;

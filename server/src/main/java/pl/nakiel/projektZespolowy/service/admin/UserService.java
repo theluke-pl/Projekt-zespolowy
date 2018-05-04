@@ -63,6 +63,11 @@ public class UserService implements IUserService{
     }
 
     @Override
+    public User getUserById(Long id){
+        return userRepository.getOne(id);
+    }
+
+    @Override
     public User initFacebookUser(InitFacebookUserRequestDTO initFacebookUserRequestDTO) {
         return null;
     }
