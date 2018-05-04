@@ -2,12 +2,14 @@ package pl.nakiel.projektZespolowy.utils.converter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.nakiel.projektZespolowy.domain.events.Event;
 import pl.nakiel.projektZespolowy.resources.dto.common.EventDTO;
 
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class EventEventDTOConverter {
     @Autowired
     private UserUserDTOConverter userUserDTOConverter;

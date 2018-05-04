@@ -1,5 +1,6 @@
 package pl.nakiel.projektZespolowy.resources.dto.common;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.text.ParseException;
@@ -16,6 +17,7 @@ public class CommentDTO {
     private String date;
     private UserDTO user;
 
+    @JsonIgnore
     public Date getSubmissionDateConverted() throws ParseException {
         return dateFormat.parse(this.date);
     }

@@ -2,9 +2,11 @@ package pl.nakiel.projektZespolowy.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.nakiel.projektZespolowy.domain.events.Comment;
 import pl.nakiel.projektZespolowy.domain.events.Event;
 import pl.nakiel.projektZespolowy.domain.geo.Localization;
+import pl.nakiel.projektZespolowy.repository.CommentRepository;
 import pl.nakiel.projektZespolowy.repository.EventRepository;
 import pl.nakiel.projektZespolowy.repository.LocalizationRepository;
 import pl.nakiel.projektZespolowy.resources.dto.common.CommentDTO;
@@ -14,10 +16,12 @@ import pl.nakiel.projektZespolowy.service.admin.UserService;
 import pl.nakiel.projektZespolowy.utils.converter.EventEventDTOConverter;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class EventService implements IEventService{
 
     @Autowired
@@ -25,6 +29,9 @@ public class EventService implements IEventService{
 
     @Autowired
     private EventRepository eventRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
 
     @Autowired
     private UserService userService;
@@ -40,14 +47,10 @@ public class EventService implements IEventService{
         Event event = new Event();
         event.setTitle(eventDTO.getTitle());
         event.setDescription(eventDTO.getDescription());
-        try {
-            event.setDate(eventDTO.getSubmissionDateConverted());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        event.setDate(new Date());
         Localization localization = new Localization();
         localization.setLatitude(eventDTO.getLocalization().getLatitude());
-        localization.setLongitude(event.getLocalization().getLongitude());
+        localization.setLongitude(eventDTO.getLocalization().getLongitude());
         localization = localizationRepository.save(localization);
         event.setLocalization(localization);
         event.setType(eventDTO.getType());
@@ -72,14 +75,18 @@ public class EventService implements IEventService{
         Event event = eventRepository.getOne(eventId);
         Comment comment = new Comment();
         comment.setComment(commentDTO.getComment());
-        comment.setCommentsAuthor(userService.getUserById(commentDTO.getUser().getId()));
+        comment.setDate(new Date());
+        comment.setCommentsAuthor(securityService.getCurrentUser());
         comment.setCommentsEvent(eventRepository.getOne(eventId));
+        comment = commentRepository.save(comment);
         eventRepository.save(event);
     }
 
     @Override
     public EventDTO getEvent(Long eventId){
         Event event = eventRepository.getOne(eventId);
+        event.setViews(event.getViews()+1);
+        event = eventRepository.save(event);
         return eventEventDTOConverter.toEventDTO(event);
     }
     @Override

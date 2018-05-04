@@ -1,5 +1,6 @@
 package pl.nakiel.projektZespolowy.resources.dto.common;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.text.ParseException;
@@ -26,6 +27,7 @@ public class EventDTO {
     private List<ImageDTO> images;
     private Boolean active;
 
+    @JsonIgnore
     public Date getSubmissionDateConverted() throws ParseException {
         return dateFormat.parse(this.date);
     }
