@@ -25,6 +25,9 @@ import java.util.stream.Collectors;
 public class EventService implements IEventService{
 
     @Autowired
+    private FileService fileService;
+
+    @Autowired
     private LocalizationRepository localizationRepository;
 
     @Autowired
