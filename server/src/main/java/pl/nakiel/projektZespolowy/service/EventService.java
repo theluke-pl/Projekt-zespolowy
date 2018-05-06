@@ -17,6 +17,7 @@ import pl.nakiel.projektZespolowy.resources.dto.common.CommentDTO;
 import pl.nakiel.projektZespolowy.resources.dto.common.EventDTO;
 import pl.nakiel.projektZespolowy.resources.dto.common.ImageDTO;
 import pl.nakiel.projektZespolowy.security.SecurityService;
+import pl.nakiel.projektZespolowy.service.admin.IUserService;
 import pl.nakiel.projektZespolowy.service.admin.UserService;
 import pl.nakiel.projektZespolowy.utils.converter.EventEventDTOConverter;
 
@@ -45,7 +46,7 @@ public class EventService implements IEventService{
     private CommentRepository commentRepository;
 
     @Autowired
-    private UserService userService;
+    private IUserService userService;
 
     @Autowired
     private SecurityService securityService;
