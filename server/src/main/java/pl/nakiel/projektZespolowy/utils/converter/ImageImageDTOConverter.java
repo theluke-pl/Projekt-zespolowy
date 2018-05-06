@@ -16,6 +16,7 @@ public class ImageImageDTOConverter {
         //zawartość pliku w base64
         FileService fileService = new FileService();
         imageDTO.setFileContent(fileService.loadFileB64(url));
+        imageDTO.setId(image.getId());
 
         return imageDTO;
     }

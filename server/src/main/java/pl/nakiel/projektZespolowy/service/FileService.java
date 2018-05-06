@@ -75,6 +75,7 @@ public class FileService implements IFileService{
         }
     }
 
+    @Override
     public String loadFileB64(String path){
         String base64Image = "";
         //String path = rootLocation.resolve(filename).toString();

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import pl.nakiel.projektZespolowy.domain.security.Role;
 import pl.nakiel.projektZespolowy.domain.security.User;
 import pl.nakiel.projektZespolowy.repository.RoleRepository;
 import pl.nakiel.projektZespolowy.repository.UserRepository;
@@ -12,10 +13,12 @@ import pl.nakiel.projektZespolowy.resources.dto.initfacebookuser.InitFacebookUse
 import pl.nakiel.projektZespolowy.security.ISecurityService;
 import pl.nakiel.projektZespolowy.security.SecurityService;
 
+import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
 
 @Service
+@Transactional
 public class UserService implements IUserService{
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -70,5 +73,24 @@ public class UserService implements IUserService{
     @Override
     public User initFacebookUser(InitFacebookUserRequestDTO initFacebookUserRequestDTO) {
         return null;
+    }
+
+    @Override
+    public Boolean hasRole(User user, Role role){
+        for(Role _role : user.getRoles()){
+            if(_role.equals(role))
+                return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+    }
+
+    @Override
+    public Boolean hasRole(User user, String role) {
+        Role foundRole = roleRepository.findByName(role);
+        for(Role _role : user.getRoles()){
+            if(_role.equals(foundRole))
+                return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
     }
 }

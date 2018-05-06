@@ -9,4 +9,6 @@ public interface IFileService {
     String store(byte[] file, String fileName);
 
     Resource loadFile(String filename);
+
+    String loadFileB64(String path);
 }

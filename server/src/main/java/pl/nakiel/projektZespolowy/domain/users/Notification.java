@@ -2,6 +2,7 @@ package pl.nakiel.projektZespolowy.domain.users;
 
 import lombok.Data;
 import pl.nakiel.projektZespolowy.domain.events.Event;
+import pl.nakiel.projektZespolowy.domain.security.User;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -21,8 +22,11 @@ public class Notification implements Serializable {
 
     @ManyToOne( fetch = FetchType.LAZY)
     @JoinColumn(name="USER_ID")
-    private Event user;
+    private User user;
 
     @Column(name="CONTENT")
     private String content;
+
+    @Column(name="READ")
+    private Boolean read;
 }

@@ -1,16 +1,21 @@
 package pl.nakiel.projektZespolowy.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.codec.Base64;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.nakiel.projektZespolowy.domain.events.Comment;
 import pl.nakiel.projektZespolowy.domain.events.Event;
+import pl.nakiel.projektZespolowy.domain.events.Image;
 import pl.nakiel.projektZespolowy.domain.geo.Localization;
+import pl.nakiel.projektZespolowy.domain.security.User;
 import pl.nakiel.projektZespolowy.repository.CommentRepository;
 import pl.nakiel.projektZespolowy.repository.EventRepository;
+import pl.nakiel.projektZespolowy.repository.ImageRepository;
 import pl.nakiel.projektZespolowy.repository.LocalizationRepository;
 import pl.nakiel.projektZespolowy.resources.dto.common.CommentDTO;
 import pl.nakiel.projektZespolowy.resources.dto.common.EventDTO;
+import pl.nakiel.projektZespolowy.resources.dto.common.ImageDTO;
 import pl.nakiel.projektZespolowy.security.SecurityService;
 import pl.nakiel.projektZespolowy.service.admin.UserService;
 import pl.nakiel.projektZespolowy.utils.converter.EventEventDTOConverter;
@@ -34,6 +39,8 @@ public class EventService implements IEventService{
     private EventRepository eventRepository;
 
     @Autowired
+    private ImageRepository imageRepository;
+
     private CommentRepository commentRepository;
 
     @Autowired
@@ -41,6 +48,10 @@ public class EventService implements IEventService{
 
     @Autowired
     private SecurityService securityService;
+
+    @Autowired
+    private INotificationService notificationService;
+
 
     @Autowired
     private EventEventDTOConverter eventEventDTOConverter;
@@ -61,6 +72,17 @@ public class EventService implements IEventService{
         event.setActive(true);
         event.setEventsAuthor(securityService.getCurrentUser());
         event.getFollowingUsers().add(securityService.getCurrentUser());
+        for(ImageDTO image: eventDTO.getImages()){
+            String url = fileService.store(
+                    Base64.decode(image.getFileContent().getBytes()),
+                    image.getFileName()
+            );
+            Image im = new Image();
+            im.setImagesEvent(event);
+            im.setUrl(url);
+            im = imageRepository.save(im);
+            event.getEventsImages().add(im);
+        }
         event = eventRepository.save(event);
         return eventEventDTOConverter.toEventDTO(event);
     }
@@ -81,8 +103,26 @@ public class EventService implements IEventService{
         comment.setDate(new Date());
         comment.setCommentsAuthor(securityService.getCurrentUser());
         comment.setCommentsEvent(eventRepository.getOne(eventId));
+        for(User user : event.getFollowingUsers()){
+            notificationService.addNotification(event, user, "Dodano nowy komentarz");
+        }
         comment = commentRepository.save(comment);
         eventRepository.save(event);
+    }
+
+    @Override
+    public void removeComment(CommentDTO commentDTO) throws Exception {
+        Comment comment = commentRepository.getOne(commentDTO.getId());
+        User currentUser = securityService.getCurrentUser();
+        User author = comment.getCommentsAuthor();
+        if(userService.hasRole(currentUser, "ADMIN") || currentUser.equals(author)) {
+            commentRepository.delete(comment);
+            for(User user : comment.getCommentsEvent().getFollowingUsers()){
+                notificationService.addNotification(comment.getCommentsEvent(), user, "Usunięto komentarz");
+            }
+        }else{
+            throw new Exception("Current user can't remove comment");
+        }
     }
 
     @Override
@@ -100,4 +140,34 @@ public class EventService implements IEventService{
                 .map(e->eventEventDTOConverter.toEventDTO(e))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void addImage(Long eventId, ImageDTO image){
+        Event event = eventRepository.getOne(eventId);
+        Image im = new Image();
+        String url = fileService.store(
+                Base64.decode(image.getFileContent().getBytes()),
+                image.getFileName()
+        );
+        im.setImagesEvent(event);
+        im.setUrl(url);
+        im = imageRepository.save(im);
+        event.getEventsImages().add(im);
+        eventRepository.save(event);
+        for(User user : event.getFollowingUsers()){
+            notificationService.addNotification(event, user, "Dodano nowy obraz");
+        }
+    }
+
+    @Override
+    public void removeImage(ImageDTO image){
+        Image im = imageRepository.getOne(image.getId());
+        im.setImagesEvent(null);
+        imageRepository.save(im);
+        for(User user : im.getImagesEvent().getFollowingUsers()){
+            notificationService.addNotification(im.getImagesEvent(), user, "Dodano Usunięto obraz");
+        }
+    }
+
+
 }

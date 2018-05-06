@@ -1,6 +1,7 @@
 package pl.nakiel.projektZespolowy.service.admin;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import pl.nakiel.projektZespolowy.domain.security.Role;
 import pl.nakiel.projektZespolowy.domain.security.User;
 import pl.nakiel.projektZespolowy.resources.dto.createstandarduser.CreateStandardUserRequestDTO;
 import pl.nakiel.projektZespolowy.resources.dto.initfacebookuser.InitFacebookUserRequestDTO;
@@ -20,4 +21,8 @@ public interface IUserService {
 
     User initFacebookUser(InitFacebookUserRequestDTO initFacebookUserRequestDTO);
 
+
+    Boolean hasRole(User user, String role);
+
+    Boolean hasRole(User user, Role role);
 }
