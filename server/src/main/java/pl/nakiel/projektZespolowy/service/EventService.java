@@ -41,6 +41,7 @@ public class EventService implements IEventService{
     @Autowired
     private ImageRepository imageRepository;
 
+    @Autowired
     private CommentRepository commentRepository;
 
     @Autowired
