@@ -17,6 +17,7 @@ services:
       MYSQL_DATABASE: test
       MYSQL_ROOT_PASSWORD: projektzespolowy
       MYSQL_ROOT_HOST: '%'
+    command: mysqld --lower_case_table_names=1 --character-set-server=utf8 --collation-server=utf8_unicode_ci --init-connect='SET NAMES UTF8;' --innodb-flush-log-at-trx-commit=0
     expose:
       - "3306"
     restart: always
@@ -29,8 +30,10 @@ services:
     volumes:
       - ./server:/server
       - ~/.m2:/root/.m2
-    expose:
-      - "8080"
+    #expose:
+    #  - "8080"
+    ports:
+      - "8080:8080"
     command: mvn clean spring-boot:run
     depends_on:
       - nginx
